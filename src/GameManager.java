@@ -18,6 +18,7 @@ public class GameManager implements Runnable {
     private final int colorCodeLength = 7;
     private final int colorCodeCellsSize = 64;
     private int generationNum;
+    private JLabel generationLabel;
     private CodeMaker codeMaker;
     private CodeBreaker codeBreaker;
     private ArrayList<Mutation> mutationsList;
@@ -27,6 +28,7 @@ public class GameManager implements Runnable {
         Thread gameMangerThread = new Thread(this);
 
         mutationsList = new ArrayList<Mutation>();
+        this.generationLabel = new JLabel("Generation: " + 0);
 
         // // Handle GUI >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         this.gameFrame = new CustomFrame("Decode Color Sequence");
@@ -37,14 +39,12 @@ public class GameManager implements Runnable {
         this.gameFrame.addItem(northPanel, "north");
 
         this.gameStatusLabel = new JLabel(this.gameStatus);
-        this.generationNum = 0;
         JButton startBtn = new JButton("Start");
         startBtn.setBackground(Color.white);
-        JLabel cPLabel = new JLabel("Generation: " + this.generationNum);
         northPanel.setLayout(new GridLayout(0, 5, 5, 5));
         northPanel.add(startBtn, BorderLayout.WEST);
         northPanel.add(this.gameStatusLabel, BorderLayout.WEST);
-        northPanel.add(cPLabel, BorderLayout.CENTER);
+        northPanel.add(this.generationLabel, BorderLayout.CENTER);
         JButton restartBtn = new JButton("Restart");
         restartBtn.setBackground(Color.white);
         JButton exitBtn = new JButton("Exit");
@@ -67,7 +67,8 @@ public class GameManager implements Runnable {
         int mutationsNum = 4;
 
         for (int i = 0; i < mutationsNum; i++) {
-            Mutation newMutation = new Mutation(this.colorCodeLength, "mutation #" + i, this.colorCodeCellsSize);
+            Mutation newMutation = new Mutation(this.colorCodeLength, "mutation #" + (i + 1), this.colorCodeCellsSize);
+            this.mutationsList.add(newMutation);
             southPanel.add(newMutation.getGUI());
         }
 
@@ -91,8 +92,15 @@ public class GameManager implements Runnable {
 
     private void launch() {
         this.gameStatus = "decoding";
+        this.gameFrame.updateLabel(this.gameStatusLabel, "text", this.gameStatus);
 
+        this.codeMaker.launch();
         this.codeBreaker.launch();
+
+        ArrayList<Double> fitnessSeq = this.codeMaker.calculateFitnessSeq(this.codeBreaker);
+        this.codeBreaker.updateFitnessSeq(fitnessSeq);
+
+        this.generationNum = 0;
 
         while (true) {
             // Check if the code got breaken
@@ -103,10 +111,15 @@ public class GameManager implements Runnable {
 
             this.codeBreaker.decode();
 
+            fitnessSeq = this.codeMaker.calculateFitnessSeq(this.codeBreaker);
+            this.codeBreaker.updateFitnessSeq(fitnessSeq);
+
+            this.generationNum++;
+            this.gameFrame.updateLabel(this.generationLabel, "text", "Generation: " + this.generationNum);
+
             try {
                 Thread.sleep(900);
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }

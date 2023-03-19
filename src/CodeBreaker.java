@@ -1,8 +1,7 @@
 import java.util.ArrayList;
 
-import javax.swing.JLabel;
-
 public class CodeBreaker extends ColorCode {
+    private ArrayList<Double> fitnessSeq;
 
     public CodeBreaker(int length, String title, int cellsSize) {
         super(length, title, cellsSize);
@@ -16,7 +15,13 @@ public class CodeBreaker extends ColorCode {
 
     public void decode() {
         for (int i = 0; i < this.getLength(); i++) {
-            this.updateCellColor(i, ColorWheel.getRandColor());
+            if (this.fitnessSeq.get(i) != 1) {
+                this.updateCellColor(i, ColorWheel.getRandColor());
+            }
         }
+    }
+
+    public void updateFitnessSeq(ArrayList<Double> fitnessSeq) {
+        this.fitnessSeq = fitnessSeq;
     }
 }

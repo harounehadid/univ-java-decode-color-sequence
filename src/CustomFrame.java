@@ -141,7 +141,6 @@ public class CustomFrame extends JFrame {
     public JButton createButton(String btnMessage) {
         JButton newBtn = new JButton(btnMessage);
         newBtn.setFont(customFont);
-        // newBtn.setSize(100, 40);
         return newBtn;
     }
 
