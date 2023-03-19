@@ -1,4 +1,5 @@
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -17,46 +18,24 @@ public class GameManager implements Runnable {
     private final int colorCodeLength = 7;
     private final int colorCodeCellsSize = 64;
     private int generationNum;
+    private CodeMaker codeMaker;
+    private CodeBreaker codeBreaker;
+    private ArrayList<Mutation> mutationsList;
 
     public GameManager() {
         // Create a new thread to run game manager in parallel
         Thread gameMangerThread = new Thread(this);
 
+        mutationsList = new ArrayList<Mutation>();
+
         // // Handle GUI >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
         this.gameFrame = new CustomFrame("Decode Color Sequence");
-        // // Create the launch button
-        // JButton launchBtn = this.gameFrame.createButton("Launch");
-        // launchBtn.addActionListener(new ActionListener() {
-        //     public void actionPerformed(ActionEvent e) {
-        //         gameMangerThread.start();
-        //         launchBtn.setVisible(false);
-        //     }
-        // });
 
-        // // Setting game status label and adding it to the south panel
-        // this.gameStatusLabel = this.gameFrame.createLabel("text", this.gameStatus);
-
+        // North
         JPanel northPanel = new JPanel();
         northPanel.setBackground(Color.white);
         this.gameFrame.addItem(northPanel, "north");
 
-        JPanel eastPanel = new JPanel();
-        this.gameFrame.addItem(eastPanel, "east");
-        
-        // JPanel centerPanel = new JPanel();
-        // this.gameFrame.addItem(centerPanel, "center");
-
-        JPanel southPanel = new JPanel();
-        this.gameFrame.addItem(southPanel, "south");
-
-        JPanel westPanel = new JPanel();
-        this.gameFrame.addItem(westPanel, "west");
-
-        // East
-        CodeBreaker codebreaker = new CodeBreaker(this.colorCodeLength, "Code Breaker", this.colorCodeCellsSize);
-        eastPanel.add(codebreaker.getGUI());
-
-        // North
         this.gameStatusLabel = new JLabel(this.gameStatus);
         this.generationNum = 0;
         JButton startBtn = new JButton("Start");
@@ -73,27 +52,37 @@ public class GameManager implements Runnable {
         northPanel.add(restartBtn, BorderLayout.EAST);
         northPanel.add(exitBtn, BorderLayout.EAST);
 
+        // East
+        JPanel eastPanel = new JPanel();
+        this.gameFrame.addItem(eastPanel, "east");
+
+        this.codeBreaker = new CodeBreaker(this.colorCodeLength, "Code Breaker", this.colorCodeCellsSize);
+        eastPanel.add(codeBreaker.getGUI());
+
         // South
-        Mutation mutation1 = new Mutation(colorCodeLength, "mutation #1", colorCodeCellsSize);
-        southPanel.add(mutation1.getGUI());
-
-        Mutation mutation2 = new Mutation(colorCodeLength, "mutation #2", colorCodeCellsSize);
-        southPanel.add(mutation2.getGUI());
-
-        Mutation mutation3 = new Mutation(colorCodeLength, "mutation #3", colorCodeCellsSize);
-        southPanel.add(mutation3.getGUI());
-
-        Mutation mutation4 = new Mutation(colorCodeLength, "mutation #4", colorCodeCellsSize);
-        southPanel.add(mutation4.getGUI()); 
+        JPanel southPanel = new JPanel();
+        this.gameFrame.addItem(southPanel, "south");
 
         southPanel.setLayout(new GridLayout(0, 2, 0, 0));
+        int mutationsNum = 4;
+
+        for (int i = 0; i < mutationsNum; i++) {
+            Mutation newMutation = new Mutation(this.colorCodeLength, "mutation #" + i, this.colorCodeCellsSize);
+            southPanel.add(newMutation.getGUI());
+        }
 
         // West
-        CodeMaker codeMaker = new CodeMaker(this.colorCodeLength, "Code Maker", this.colorCodeCellsSize);
-        westPanel.add(codeMaker.getGUI());
+        JPanel westPanel = new JPanel();
+        this.gameFrame.addItem(westPanel, "west");
 
+        this.codeMaker = new CodeMaker(this.colorCodeLength, "Code Maker", this.colorCodeCellsSize);
+        westPanel.add(this.codeMaker.getGUI());
+
+        // Wrap the frame around its components
         this.gameFrame.finalizeFrameSetup();
         // -----------------------------------------------------------------------------
+
+        this.launch();
     }
 
     public void run() {
@@ -103,29 +92,26 @@ public class GameManager implements Runnable {
     private void launch() {
         this.gameStatus = "decoding";
 
-        // while (!this.isGameOver()) {
+        this.codeBreaker.launch();
 
-        //     // Check if player stayed at the same cell
-        //     if (this.player.isStuck(prevIndexPos) || (nextPlayerDestination.getX() < 0 && nextPlayerDestination.getY() < 0)) {
-        //         if (!this.player.findOtherPath()) {
-        //             setStatusToFail();
-        //             break;
-        //         }
-        //     }
+        while (true) {
+            // Check if the code got breaken
+            if (this.codeMaker.isEqual(this.codeBreaker)) {
+                this.setStatusToSuccess();
+                break;
+            }
 
-        //     try {
-        //         Thread.sleep(900);
-        //     } catch (InterruptedException e) {
-        //         // TODO Auto-generated catch block
-        //         e.printStackTrace();
-        //     }
-        // }
+            this.codeBreaker.decode();
 
-        // this.gameFrame.updateLabel(this.gameStatusLabel, "text", this.gameStatus);
-    }
+            try {
+                Thread.sleep(900);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
 
-    private boolean isGameOver() {
-        return this.gameStatus == this.successState;
+        this.gameFrame.updateLabel(this.gameStatusLabel, "text", this.gameStatus);
     }
 
     private void setStatusToSuccess() {

@@ -65,4 +65,8 @@ public abstract class ColorCode {
     public JPanel getGUI() {
         return this.container;
     }
+
+    public ArrayList<JLabel> getColorSeq() {
+        return this.colorSeq;
+    }
 }
