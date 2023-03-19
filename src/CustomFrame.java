@@ -23,11 +23,6 @@ public class CustomFrame extends JFrame {
         this.setResizable(false);
         this.setLocationRelativeTo(null);
 
-        // ImageIcon image = new ImageIcon(GetBaseDirPath.root() +
-        // "/src/media/find-path-algorithm-logo-GeeksforGeeks-image.png");
-
-        // this.setIconImage(image.getImage());
-
         // this.getContentPane().setBackground(new Color(0xf8f9f9));
 
         // Setting the font to be used
@@ -36,7 +31,7 @@ public class CustomFrame extends JFrame {
             customFont = Font.createFont(Font.TRUETYPE_FONT, new File(fontPath));
             customFont = customFont.deriveFont(Font.PLAIN, 12);
         } catch (IOException|FontFormatException e) {
-            System.out.println("(!) Font NOT detected (!)");
+            // System.out.println("(!) Font NOT detected (!)");
             customFont = this.getFont();
         }
     }
