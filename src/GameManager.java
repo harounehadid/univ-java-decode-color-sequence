@@ -95,10 +95,7 @@ public class GameManager implements Runnable {
         this.gameFrame.updateLabel(this.gameStatusLabel, "text", this.gameStatus);
 
         this.codeMaker.launch();
-        this.codeBreaker.launch();
-
-        ArrayList<Double> fitnessSeq = this.codeMaker.calculateFitnessSeq(this.codeBreaker);
-        this.codeBreaker.updateFitnessSeq(fitnessSeq);
+        this.codeBreaker.launch(this);
 
         this.generationNum = 0;
 
@@ -111,9 +108,6 @@ public class GameManager implements Runnable {
 
             this.codeBreaker.decode();
 
-            fitnessSeq = this.codeMaker.calculateFitnessSeq(this.codeBreaker);
-            this.codeBreaker.updateFitnessSeq(fitnessSeq);
-
             this.generationNum++;
             this.gameFrame.updateLabel(this.generationLabel, "text", "Generation: " + this.generationNum);
 
@@ -125,6 +119,10 @@ public class GameManager implements Runnable {
         }
 
         this.gameFrame.updateLabel(this.gameStatusLabel, "text", this.gameStatus);
+    }
+
+    public ArrayList<Double> getFitnessSeq(ColorCode colorCode) {
+        return this.codeMaker.calculateFitnessSeq(colorCode);
     }
 
     private void setStatusToSuccess() {
