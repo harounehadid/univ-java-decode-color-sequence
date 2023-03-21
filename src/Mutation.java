@@ -50,22 +50,24 @@ public class Mutation extends ColorCode {
             for (int i = missColor.getIndex() + 1; true; i++) {
                 if (i == this.getLength()) i = 0;
 
-                if (fitnessSeq.get(i) != 1) {
+                if (fitnessSeq.get(i) < 1) {
                     this.updateCellColor(i, missColor.getColor());
-                    CustomFrame.sleep(200);
+                    CustomFrame.sleep(100);
                     break;
                 }
             }
         }
+
+        fitnessSeq = gameManager.getFitnessSeq(this);
         
         for (int i = 0; i < this.getLength(); i++) {
             if (fitnessSeq.get(i) != 1) {
                 this.updateCellColor(i, ColorWheel.getRandColor());
-                CustomFrame.sleep(200);
+                CustomFrame.sleep(100);
             }
             else {
                 this.updateCellColor(i, codeBreaker.getColorSeq().get(i).getBackground());
-                CustomFrame.sleep(200);
+                CustomFrame.sleep(100);
             }
         }
 

@@ -15,7 +15,7 @@ public class GameManager implements Runnable {
     private CustomFrame gameFrame;
     private JLabel gameStatusLabel;
     private final String successState = "the secret code is found";
-    private final int colorCodeLength = 7;
+    private final int colorCodeLength = 5;
     private final int colorCodeCellsSize = 64;
     private int generationNum;
     private JLabel generationLabel;

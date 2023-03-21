@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import javax.swing.JLabel;
 
 public class CodeMaker extends ColorCode {
-    private ArrayList<Double> curFitnessSeq;
+    // private ArrayList<Double> curFitnessSeq;
     // Keep track of CodeMaker data
     // private ArrayList<Color> colorsList;
     // private ArrayList<Integer> colorsNum;
@@ -81,7 +81,7 @@ public class CodeMaker extends ColorCode {
         ArrayList<Double> fitnessSeq = new ArrayList<>();
         ArrayList<JLabel> cbColorSeq = colorCode.getColorSeq();
 
-        this.curFitnessSeq = colorCode.getFitnessSeq();
+        // this.curFitnessSeq = colorCode.getFitnessSeq();
 
         for (int i = 0; i < this.getLength(); i++) this.cellsAccessList.set(i, true);
 
@@ -90,13 +90,13 @@ public class CodeMaker extends ColorCode {
 
             Color curColor = cbColorSeq.get(i).getBackground();
 
-            if (this.curFitnessSeq != null) {
-                if (this.curFitnessSeq.get(i) == 1) {
-                    fitness = 1;
-                    fitnessSeq.add(fitness);
-                    continue;
-                }    
-            }
+            // if (this.curFitnessSeq != null) {
+            //     if (this.curFitnessSeq.get(i) == 1) {
+            //         fitness = 1;
+            //         fitnessSeq.add(fitness);
+            //         continue;
+            //     }    
+            // }
 
             if (this.colorExists(curColor)) {
                 fitness += 0.5;
@@ -121,7 +121,7 @@ public class CodeMaker extends ColorCode {
         ArrayList<Double> fitnessSeq = new ArrayList<>();
         ArrayList<JLabel> cbColorSeq = colorCode.getColorSeq();
 
-        this.curFitnessSeq = colorCode.getFitnessSeq();
+        // this.curFitnessSeq = colorCode.getFitnessSeq();
 
         for (int i = 0; i < this.getLength(); i++) this.cellsAccessList.set(i, true);
 
@@ -130,13 +130,13 @@ public class CodeMaker extends ColorCode {
 
             Color curColor = cbColorSeq.get(i).getBackground();
 
-            if (this.curFitnessSeq != null) {
-                if (this.curFitnessSeq.get(i) == 1) {
-                    fitness = 1;
-                    fitnessSeq.add(fitness);
-                    continue;
-                }    
-            }
+            // if (this.curFitnessSeq != null) {
+            //     if (this.curFitnessSeq.get(i) == 1) {
+            //         fitness = 1;
+            //         fitnessSeq.add(fitness);
+            //         continue;
+            //     }    
+            // }
 
             if (this.colorExists(curColor)) {
                 fitness += 0.5;
