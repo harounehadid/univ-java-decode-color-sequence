@@ -18,11 +18,30 @@ public class CodeBreaker extends ColorCode {
     }
 
     public void decode() {
-       for (int i = 0; i < this.getLength(); i++) {
+        ArrayList<MissColor> missColors = new ArrayList<>();
+
+        for (int i = 0; i < this.getLength(); i++) {
+            if (this.fitnessSeq.get(i) == 0.5) {
+                missColors.add(new MissColor(this.getColorSeq().get(i).getBackground(), i));
+            }
+        }
+
+        for (MissColor missColor : missColors) {
+            for (int i = missColor.getIndex() + 1; true; i++) {
+                if (i == this.getLength()) i = 0;
+
+                if (this.fitnessSeq.get(i) != 1) {
+                    this.updateCellColor(i, missColor.getColor());
+                    break;
+                }
+            }
+        }
+        
+        for (int i = 0; i < this.getLength(); i++) {
             if (this.fitnessSeq.get(i) != 1) {
                 this.updateCellColor(i, ColorWheel.getRandColor());
             }
-       }
+        }
 
        this.fitnessSeq = this.gameManager.getFitnessSeq(this);
     }
