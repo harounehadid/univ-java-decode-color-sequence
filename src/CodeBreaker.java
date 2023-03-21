@@ -24,35 +24,50 @@ public class CodeBreaker extends ColorCode {
             mutation.decode(this);
         }
 
-        ArrayList<Double> fstSeq = new ArrayList<>();
-        ArrayList<Double> sndSeq = new ArrayList<>();
+        ArrayList<Double> fstSeq = null;
+        ArrayList<Double> sndSeq = null;
 
         double max1 = 0;
-        double max2 = 0;
-
         int index1 = -1;
+
+        double max2 = 0;
         int index2 = -1;
 
+        double tempMax;
+        int tempI;
+
         for (int i = 0; i < this.mutations.size(); i++) {
+            System.out.println("max = " + this.mutations.get(i).getMax() + " >>>>>>>>>>>>>>>>>");
+            System.out.println("Max 1 = " + max1);
+            System.out.println("Max 2 = " + max2);
+
             if (this.mutations.get(i).getMax() > max1) {
+                tempMax = max1;
+                tempI = index1;
+
                 max1 = this.mutations.get(i).getMax();
                 index1 = i;
+
+                max2 = tempMax;
+                index2 = tempI;
+
+                System.out.println("Max 1 is changed");
             }
             else {
                 if (this.mutations.get(i).getMax() > max2) {
                     max2 = this.mutations.get(i).getMax();
                     index2 = i;
+
+                    System.out.println("Max 2 is changed");
                 }
             }
         }
 
         for (int i = 0; i < this.mutations.size(); i++) {
-            if (i == index1) {
-                fstSeq = this.mutations.get(i).getFitnessSeq();
-                this.mutations.get(i).onAccept();
-            }
-            else if (i == index2) {
-                sndSeq = this.mutations.get(i).getFitnessSeq();
+            if (i == index1 || i == index2) {
+                if (fstSeq == null) fstSeq = this.mutations.get(i).getFitnessSeq();
+                else if (sndSeq == null) sndSeq = this.mutations.get(i).getFitnessSeq();
+                
                 this.mutations.get(i).onAccept();
             }
             else {

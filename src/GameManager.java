@@ -117,7 +117,11 @@ public class GameManager implements Runnable {
         this.gameFrame.updateLabel(this.gameStatusLabel, "text", this.gameStatus);
     }
 
-    public ArrayList<Double> getFitnessSeq(ColorCode colorCode) {
+    public ArrayList<Double> getFitnessSeq(CodeBreaker colorCode) {
+        return this.codeMaker.calculateFitnessSeq(colorCode);
+    }
+
+    public ArrayList<Double> getFitnessSeq(Mutation colorCode) {
         return this.codeMaker.calculateFitnessSeq(colorCode);
     }
 
