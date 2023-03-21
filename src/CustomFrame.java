@@ -149,4 +149,12 @@ public class CustomFrame extends JFrame {
         this.pack();
         this.setVisible(true);
     } /* This function is created to avoid any problems that can occure with GUI */
+
+    public static void sleep(int miliSecNum) {
+        try {
+            Thread.sleep(miliSecNum);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }

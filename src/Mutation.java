@@ -46,32 +46,30 @@ public class Mutation extends ColorCode {
             }
         }
 
-        // for (MissColor missColor : missColors) {
-        //     for (int i = missColor.getIndex() + 1; true; i++) {
-        //         if (i == this.getLength()) i = 0;
+        for (MissColor missColor : missColors) {
+            for (int i = missColor.getIndex() + 1; true; i++) {
+                if (i == this.getLength()) i = 0;
 
-        //         if (fitnessSeq.get(i) != 1) {
-        //             try {
-        //                 Thread.sleep(200);
-        //             } catch (InterruptedException e) {
-        //                 e.printStackTrace();
-        //             }
-        //             this.updateCellColor(i, missColor.getColor());
-        //             break;
-        //         }
-        //     }
-        // }
+                if (fitnessSeq.get(i) != 1) {
+                    this.updateCellColor(i, missColor.getColor());
+                    CustomFrame.sleep(200);
+                    break;
+                }
+            }
+        }
         
         for (int i = 0; i < this.getLength(); i++) {
             if (fitnessSeq.get(i) != 1) {
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
                 this.updateCellColor(i, ColorWheel.getRandColor());
+                CustomFrame.sleep(200);
+            }
+            else {
+                this.updateCellColor(i, codeBreaker.getColorSeq().get(i).getBackground());
+                CustomFrame.sleep(200);
             }
         }
+
+        fitnessSeq = gameManager.getFitnessSeq(this);
 
         this.max = 0;
 
@@ -83,11 +81,7 @@ public class Mutation extends ColorCode {
 
         this.fitnessSeq = this.gameManager.getFitnessSeq(this);
 
-        try {
-            Thread.sleep(400);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        CustomFrame.sleep(400);
     }
 
     public void onAccept() {

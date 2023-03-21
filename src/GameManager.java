@@ -111,11 +111,7 @@ public class GameManager implements Runnable {
             this.generationNum++;
             this.gameFrame.updateLabel(this.generationLabel, "text", "Generation: " + this.generationNum);
 
-            try {
-                Thread.sleep(900);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            CustomFrame.sleep(900);
         }
 
         this.gameFrame.updateLabel(this.gameStatusLabel, "text", this.gameStatus);
