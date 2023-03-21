@@ -36,28 +36,31 @@ public class CodeMaker extends ColorCode {
     }
 
     public ArrayList<Double> calculateFitnessSeq(ColorCode colorCode) {
-        ArrayList<Double> fitnessSeq = new ArrayList<Double>();
-        ArrayList<Integer> restrictedIndexesList = new ArrayList<Integer>();
+        ArrayList<Double> fitnessSeq = new ArrayList<>();
+        ArrayList<JLabel> cbColorSeq = colorCode.getColorSeq();
 
         for (int i = 0; i < this.getLength(); i++) {
             double fitness = 0;
-            Color color = colorCode.getColorSeq().get(i).getBackground();
 
-            if (this.colorExists(color)) {
-                if (this.curFitnessSeq != null) {
-                    if (this.curFitnessSeq.get(i) == 1) {
-                        fitness = 1;
-                        restrictedIndexesList.add(i);
-                        fitnessSeq.add(fitness);
-                        continue;
-                    }
-                }
+            Color curColor = cbColorSeq.get(i).getBackground();
 
+            if (this.curFitnessSeq != null) {
+                if (this.curFitnessSeq.get(i) == 1) {
+                    fitness = 1;
+                    fitnessSeq.add(fitness);
+                    continue;
+                }    
+            }
+
+            if (this.colorExists(curColor)) {
                 fitness += 0.5;
 
-                if (this.getColorIndex(color, restrictedIndexesList) == i) {
-                    fitness += 0.5;
-                    restrictedIndexesList.add(i);
+                ArrayList<Integer> indexes = this.getColorIndexes(curColor);
+                for (Integer index : indexes) {
+                    if (index == i) {
+                        fitness += 0.5;
+                        break;
+                    }
                 }
             }
 
@@ -73,11 +76,7 @@ public class CodeMaker extends ColorCode {
         boolean exist = false;
 
         for (int i = 0; i < this.getLength(); i++) {
-            if (this.getColorSeq().get(i).getBackground() == color) {
-                if (this.curFitnessSeq != null) {
-                    if (this.curFitnessSeq.get(i) == 1) continue;
-                }
-
+            if (color == this.getColorSeq().get(i).getBackground()) {
                 exist = true;
                 break;
             }
@@ -86,15 +85,16 @@ public class CodeMaker extends ColorCode {
         return exist;
     }
 
-    public Integer getColorIndex(Color color, ArrayList<Integer> restrictedIndexesList) {
-        int index = -1;
+    public ArrayList<Integer> getColorIndexes(Color color) {
+        ArrayList<Integer> indexes = new ArrayList<>();
 
         for (int i = 0; i < this.getLength(); i++) {
-            if (this.getColorSeq().get(i).getBackground() == color && !restrictedIndexesList.contains(i)) {
-                index = i;
+            if (color == this.getColorSeq().get(i).getBackground()) {
+                indexes.add(i);
+                break;
             }
         }
 
-        return index;
+        return indexes;
     }
 }
