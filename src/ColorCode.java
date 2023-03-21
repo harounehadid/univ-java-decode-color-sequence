@@ -53,6 +53,10 @@ public abstract class ColorCode {
         this.colorSeq.get(index).setBackground(color);;
     }
 
+    public void addToMainPanel(JLabel label) {
+        this.container.add(label);
+    }
+
     // Getters
     public int getLength() {
         return this.length;

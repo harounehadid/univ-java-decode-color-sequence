@@ -67,7 +67,7 @@ public class GameManager implements Runnable {
         int mutationsNum = 4;
 
         for (int i = 0; i < mutationsNum; i++) {
-            Mutation newMutation = new Mutation(this.colorCodeLength, "mutation #" + (i + 1), this.colorCodeCellsSize);
+            Mutation newMutation = new Mutation(this.colorCodeLength, "mutation #" + (i + 1), this.colorCodeCellsSize, this);
             this.mutationsList.add(newMutation);
             southPanel.add(newMutation.getGUI());
         }
@@ -95,7 +95,7 @@ public class GameManager implements Runnable {
         this.gameFrame.updateLabel(this.gameStatusLabel, "text", this.gameStatus);
 
         this.codeMaker.launch();
-        this.codeBreaker.launch(this);
+        this.codeBreaker.launch(this, this.mutationsList);
 
         this.generationNum = 0;
 
