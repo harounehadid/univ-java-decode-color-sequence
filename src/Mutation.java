@@ -58,7 +58,7 @@ public class Mutation extends ColorCode {
             }
         }
 
-        fitnessSeq = gameManager.getFitnessSeq(this);
+        // fitnessSeq = gameManager.getFitnessSeq(this);
         
         for (int i = 0; i < this.getLength(); i++) {
             if (fitnessSeq.get(i) != 1) {
