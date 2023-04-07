@@ -50,7 +50,7 @@ public abstract class ColorCode {
     }
 
     public void updateCellColor(int index, Color color) {
-        this.colorSeq.get(index).setBackground(color);;
+        this.colorSeq.get(index).setBackground(color);
     }
 
     public void addToMainPanel(JLabel label) {

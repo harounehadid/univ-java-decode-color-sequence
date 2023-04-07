@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
@@ -7,23 +8,21 @@ import utils.GetBaseDirPath;
 
 public class Mutation extends ColorCode {
     private GameManager gameManager;
-    private double max;
     private ArrayList<Double> fitnessSeq;
+    private double fitnessSum;
     private JLabel statusLabel;
 
     public Mutation(int length, String title, int cellsSize, GameManager gameManager) {
         super(length, title, cellsSize);
         this.gameManager = gameManager;
-
+        
         this.statusLabel = new JLabel();
-
         this.updateGUI("text", "0%                 ");
-
         this.updateGUI("image", GetBaseDirPath.root() + "/src/media/neutrual.png");
         this.addToMainPanel(this.statusLabel);
     }
 
-    public void updateGUI(String type, String data) {
+    private void updateGUI(String type, String data) {
         if (type == "image") {
             ImageIcon image = new ImageIcon(data);
             this.statusLabel.setSize(image.getIconWidth(), image.getIconHeight());
@@ -34,77 +33,70 @@ public class Mutation extends ColorCode {
         }
     }
 
-    public void decode(CodeBreaker codeBreaker) {
-        this.updateGUI("image", GetBaseDirPath.root() + "/src/media/neutrual.png");
-
-        ArrayList<Double> fitnessSeq = codeBreaker.getFitnessSeq();
-        ArrayList<MissColor> missColors = new ArrayList<>();
-
+    public Mutation initialize() {
+        System.out.println("Mutation initializing ...");
+        // Generate random color seq
         for (int i = 0; i < this.getLength(); i++) {
-            if (fitnessSeq.get(i) == 0.5) {
-                missColors.add(new MissColor(this.getColorSeq().get(i).getBackground(), i));
-            }
+            Color randColor = ColorWheel.getRandColor();
+            this.updateCellColor(i, randColor);
         }
 
-        for (MissColor missColor : missColors) {
-            for (int i = missColor.getIndex() + 1; true; i++) {
-                if (i == this.getLength()) i = 0;
-
-                if (fitnessSeq.get(i) < 1) {
-                    this.updateCellColor(i, missColor.getColor());
-                    CustomFrame.sleep(100);
-                    break;
-                }
-            }
-        }
-
-        // fitnessSeq = gameManager.getFitnessSeq(this);
-        
-        for (int i = 0; i < this.getLength(); i++) {
-            if (fitnessSeq.get(i) != 1) {
-                this.updateCellColor(i, ColorWheel.getRandColor());
-                CustomFrame.sleep(100);
-            }
-            else {
-                this.updateCellColor(i, codeBreaker.getColorSeq().get(i).getBackground());
-                CustomFrame.sleep(100);
-            }
-        }
-
-        fitnessSeq = gameManager.getFitnessSeq(this);
-
-        this.max = 0;
-
-        for (Double val : fitnessSeq) {
-            this.max += val;
-        }
-
-        this.displayPercentage();
-
+        // Get fitness seq
         this.fitnessSeq = this.gameManager.getFitnessSeq(this);
 
-        CustomFrame.sleep(400);
+        // Calculate percentage
+        this.calculateFitnessSum().displayPercentage();
+
+        System.out.println("Mutation done initializing");
+
+        return this;
     }
 
-    public void onAccept() {
-        this.updateGUI("image", GetBaseDirPath.root() + "/src/media/accepted.png");
+    public void copyColorSeq(ColorCode colorCode) {
+        for (int i = 0; i < this.getLength(); i++) {
+            this.updateCellColor(i, colorCode.getColorSeq().get(i).getBackground());
+        }
+
+        // Update stats
+        this.updateStats();
     }
 
-    public void onReject() {
-        this.updateGUI("image", GetBaseDirPath.root() + "/src/media/rejected.png");
+    // public void onAccept() {
+    //     this.updateGUI("image", GetBaseDirPath.root() + "/src/media/accepted.png");
+    // }
+
+    // public void onReject() {
+    //     this.updateGUI("image", GetBaseDirPath.root() + "/src/media/rejected.png");
+    // }
+
+    public void updateStats() {
+        this.fitnessSeq = this.gameManager.getFitnessSeq(this);
+        this.calculateFitnessSum();
+        System.out.println("New fitness sum is " + this.fitnessSum);
+    }
+
+    public Mutation calculateFitnessSum() {
+        this.fitnessSum = 0;
+
+        for (Double val : this.fitnessSeq) {
+            this.fitnessSum += val;
+        }
+
+        return this;
+    }
+
+    public double calculatePercentage() {
+        return Math.floor(((this.fitnessSum / this.getLength() * 100)) * 10.0) / 10.0;
     }
 
     public void displayPercentage() {
-        Double percentage = Math.floor(((this.max / this.getLength() * 100)) * 10.0) / 10.0;
+        Double percentage = calculatePercentage();
         this.updateGUI("text", Double.toString(percentage) + "%");
+        System.out.println("Mutation percentage is " + percentage);
     }
 
     // Getters
-    public double getMax() {
-        return this.max;
-    }
-
-    public ArrayList<Double> getFitnessSeq() {
-        return this.fitnessSeq;
+    public double getFitnessSum() {
+        return this.fitnessSum;
     }
 }

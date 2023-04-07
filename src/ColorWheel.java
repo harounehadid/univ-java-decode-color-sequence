@@ -27,7 +27,7 @@ public final class ColorWheel {
         return colors.get(index);
     }
 
-    public static int getColorsIndex(Color color) {
+    public static int getColorIndex(Color color) {
         int index = -1;
 
         for (int i = 0; i < colors.size(); i++) {

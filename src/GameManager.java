@@ -15,13 +15,14 @@ public class GameManager implements Runnable {
     private CustomFrame gameFrame;
     private JLabel gameStatusLabel;
     private final String successState = "the secret code is found";
+    private boolean gameOver = false;
     private final int colorCodeLength = 5;
     private final int colorCodeCellsSize = 64;
     private int generationNum;
     private JLabel generationLabel;
     private CodeMaker codeMaker;
-    private CodeBreaker codeBreaker;
     private ArrayList<Mutation> mutationsList;
+    private GeneticsAlgo geneticsAlgo;
 
     public GameManager() {
         // Create a new thread to run game manager in parallel
@@ -56,8 +57,7 @@ public class GameManager implements Runnable {
         JPanel eastPanel = new JPanel();
         this.gameFrame.addItem(eastPanel, "east");
 
-        this.codeBreaker = new CodeBreaker(this.colorCodeLength, "Code Breaker", this.colorCodeCellsSize);
-        eastPanel.add(codeBreaker.getGUI());
+        eastPanel.add(new JLabel("Extra Info"));
 
         // South
         JPanel southPanel = new JPanel();
@@ -94,38 +94,26 @@ public class GameManager implements Runnable {
         this.gameStatus = "decoding";
         this.gameFrame.updateLabel(this.gameStatusLabel, "text", this.gameStatus);
 
-        this.codeMaker.launch();
-        this.codeBreaker.launch(this, this.mutationsList);
+        this.geneticsAlgo = new GeneticsAlgo(this.codeMaker, this.mutationsList, this);
+        this.geneticsAlgo.launch();
 
         this.generationNum = 0;
 
-        while (true) {
-            // Check if the code got breaken
-            if (this.codeMaker.isEqual(this.codeBreaker)) {
-                this.setStatusToSuccess();
-                break;
-            }
-
-            this.codeBreaker.decode();
-
+        while (! this.gameOver) {
             this.generationNum++;
             this.gameFrame.updateLabel(this.generationLabel, "text", "Generation: " + this.generationNum);
-
-            CustomFrame.sleep(900);
+            
+            this.geneticsAlgo.decode();
         }
 
         this.gameFrame.updateLabel(this.gameStatusLabel, "text", this.gameStatus);
     }
 
-    public ArrayList<Double> getFitnessSeq(CodeBreaker colorCode) {
+    public ArrayList<Double> getFitnessSeq(ColorCode colorCode) {
         return this.codeMaker.calculateFitnessSeq(colorCode);
     }
-
-    public ArrayList<Double> getFitnessSeq(Mutation colorCode) {
-        return this.codeMaker.calculateFitnessSeq(colorCode);
-    }
-
-    private void setStatusToSuccess() {
+    public void gameOver() {
         this.gameStatus = this.successState;
+        this.gameOver = true;
     }
 }
