@@ -61,6 +61,11 @@ public class Mutation extends ColorCode {
         this.updateStats();
     }
 
+    public void mutateCell(int index, Color newColor) {
+        this.updateCellColor(index, newColor);
+        this.updateStats();
+    }
+
     // public void onAccept() {
     //     this.updateGUI("image", GetBaseDirPath.root() + "/src/media/accepted.png");
     // }
@@ -69,10 +74,11 @@ public class Mutation extends ColorCode {
     //     this.updateGUI("image", GetBaseDirPath.root() + "/src/media/rejected.png");
     // }
 
-    public void updateStats() {
+    private void updateStats() {
         this.fitnessSeq = this.gameManager.getFitnessSeq(this);
         this.calculateFitnessSum();
         System.out.println("New fitness sum is " + this.fitnessSum);
+        this.displayPercentage();
     }
 
     public Mutation calculateFitnessSum() {
