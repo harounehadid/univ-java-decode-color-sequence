@@ -62,7 +62,7 @@ public class CodeMaker extends ColorCode {
             // }
 
             if (this.colorExists(curColor)) {
-                fitness += 0.5;
+                fitness += 0.6;
 
                 ArrayList<Integer> indexes = this.getColorIndexes(curColor);
                 for (Integer index : indexes) {

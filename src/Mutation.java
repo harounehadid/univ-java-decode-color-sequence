@@ -34,7 +34,6 @@ public class Mutation extends ColorCode {
     }
 
     public Mutation initialize() {
-        System.out.println("Mutation initializing ...");
         // Generate random color seq
         for (int i = 0; i < this.getLength(); i++) {
             Color randColor = ColorWheel.getRandColor();
@@ -46,8 +45,6 @@ public class Mutation extends ColorCode {
 
         // Calculate percentage
         this.calculateFitnessSum().displayPercentage();
-
-        System.out.println("Mutation done initializing");
 
         return this;
     }
@@ -77,7 +74,6 @@ public class Mutation extends ColorCode {
     private void updateStats() {
         this.fitnessSeq = this.gameManager.getFitnessSeq(this);
         this.calculateFitnessSum();
-        System.out.println("New fitness sum is " + this.fitnessSum);
         this.displayPercentage();
     }
 
@@ -98,7 +94,6 @@ public class Mutation extends ColorCode {
     public void displayPercentage() {
         Double percentage = calculatePercentage();
         this.updateGUI("text", Double.toString(percentage) + "%");
-        System.out.println("Mutation percentage is " + percentage);
     }
 
     // Getters

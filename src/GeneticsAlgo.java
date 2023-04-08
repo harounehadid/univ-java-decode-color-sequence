@@ -22,10 +22,21 @@ public class GeneticsAlgo {
     }
 
     public void decode() {
+        CustomFrame.sleep(50);
+        System.out.println("\n\n\nSelect population --------------------------------------------------------------");
         this.selectPopulations();
+        // CustomFrame.sleep(250);
+        System.out.println("--------------------------------------------------------------");
 
+        System.out.println("\n\n\nCrossover --------------------------------------------------------------");
         this.crossover();
+        // CustomFrame.sleep(250);
+        System.out.println("--------------------------------------------------------------");
+
+        System.out.println("\n\n\nMutation --------------------------------------------------------------");
         this.mutation();
+        // CustomFrame.sleep(250);
+        System.out.println("--------------------------------------------------------------");
 
         if (codeFound()) this.onCodeFound();
     }
@@ -39,31 +50,35 @@ public class GeneticsAlgo {
             allFitnessSum += mutation.getFitnessSum();
         }
 
-        System.out.println("All fitness sum is " + allFitnessSum);
+        // System.out.println("All fitness sum is " + allFitnessSum);
+
+        double curRange = 0.0;
 
         for (int i = 0; i < this.mutationsList.size() - 1; i++) {
-            double prob = this.mutationsList.get(i).getFitnessSum() / allFitnessSum * 100;
-            probEnd.add(prob);
-            System.out.println("Population selection prob is " + probEnd.get(i));
+            curRange += calculatePercentage(this.mutationsList.get(i).getFitnessSum(), allFitnessSum);
+            probEnd.add(curRange);
+            // System.out.println("Population selection prob is " + probEnd.get(i));
         }
+
+        System.out.println("\n\n\n");
 
         // Run random number generator and compare with probabilities
         ArrayList<Integer> selectedIndexes = new ArrayList<>();
 
         for (int i = 0; i < this.mutationsList.size(); i++) {
-            double randProb = Math.random() * 100;
-            System.out.println("Selected prob is " + randProb);
+            double randProb = this.calculatePercentage(Math.random() * 100, 100);
+            // System.out.println("Selected prob is " + randProb);
 
             for (int j = 0; j < probEnd.size(); j++) {
-                if (randProb < probEnd.get(i)) {
+                if (randProb < probEnd.get(j)) {
                     selectedIndexes.add(j);
-                    System.out.println("Selected population is " + j);
+                    // System.out.println("Selected population is " + j);
                     break;
                 }
                 else {
                     if (j == probEnd.size() - 1) {
-                        selectedIndexes.add(j);
-                        System.out.println("Selected population is " + j);
+                        selectedIndexes.add(j + 1);
+                        // System.out.println("Selected population is " + (j + 1));
                     }
                 }
             }
@@ -73,16 +88,21 @@ public class GeneticsAlgo {
         ArrayList<Mutation> updatedPopulation = new ArrayList<>();
 
         for (int i = 0; i < this.mutationsList.size(); i++) {
-            Mutation selectedPopulation = new Mutation(this.codeMaker.getLength(), null, 0, null).initialize();
+            Mutation selectedPopulation = new Mutation(this.codeMaker.getLength(), null, 0, this.gameManager).initialize();
             selectedPopulation.copyColorSeq(this.mutationsList.get(selectedIndexes.get(i)));
             updatedPopulation.add(selectedPopulation);
-            System.out.println("Loading the selected population");
+            // System.out.println("Loading the selected population");
         }
 
         for (int i = 0; i < this.mutationsList.size(); i++) {
             this.mutationsList.get(i).copyColorSeq(updatedPopulation.get(i));
-            CustomFrame.sleep(250);
+            // CustomFrame.sleep(250);
         }
+    }
+
+    private double calculatePercentage(double fraction, double whole) {
+        // System.out.println(">>>>>>>>>>>>>>>>>>>> Fraction = " + fraction + " >>>>>>>>>>>>>>>>>>>>>>>>>>>> whole = " + whole);
+        return Math.floor(((fraction / whole * 100)) * 100.0) / 100.0;
     }
 
     private ArrayList<Integer> selectPairs() {
@@ -107,53 +127,61 @@ public class GeneticsAlgo {
         // Using this method, both methods bellow should loop using i += 2 instead of the common progression
         ArrayList<Integer> pairsList = this.selectPairs();
 
+        ArrayList<Mutation> newParents = new ArrayList<>();
+        ArrayList<Integer> recordedIndexes = new ArrayList<>();
+
         for (int i = 0; i < this.mutationsList.size(); i += 2) {
             // Check the probabilities of each pair
-            if (this.mutationsList.get(i).calculatePercentage() > 70 || this.mutationsList.get(i + 1).calculatePercentage() > 70) {
+            if (this.mutationsList.get(pairsList.get(i)).calculatePercentage() <= 70 || this.mutationsList.get(pairsList.get(i + 1)).calculatePercentage() <= 70) {
                 // Select rand index
                 int randIndex = (int)Math.floor(Math.random() * this.codeMaker.getLength());
 
                 // Cross between the pairs
-                Mutation fstCopy = new Mutation(this.codeMaker.getLength(), null, 0, null).initialize();
-                Mutation sndCopy = new Mutation(this.codeMaker.getLength(), null, 0, null).initialize();
+                Mutation fstCopy = new Mutation(this.codeMaker.getLength(), null, 0, this.gameManager).initialize();
+                Mutation sndCopy = new Mutation(this.codeMaker.getLength(), null, 0, this.gameManager).initialize();
                 
-                for (int j = 0; j < 2; j++) {
-                    for (int k = 0; k < this.codeMaker.getLength(); k++) {
-                        if (k < randIndex) {
-                            fstCopy.updateCellColor(randIndex, this.mutationsList.get(i).getColorSeq().get(k).getBackground());
-                        }
-                        else {
-                            fstCopy.updateCellColor(randIndex, this.mutationsList.get(i + 1).getColorSeq().get(k).getBackground());
-                        }
+                for (int j = 0; j < this.codeMaker.getLength(); j++) {
+                    if (j < randIndex) {
+                        fstCopy.updateCellColor(j, this.mutationsList.get(pairsList.get(i)).getColorSeq().get(j).getBackground());
+                    }
+                    else {
+                        fstCopy.updateCellColor(j, this.mutationsList.get(pairsList.get(i + 1)).getColorSeq().get(j).getBackground());
                     }
                 }
 
-                for (int j = 0; j < 2; j++) {
-                    for (int k = 0; k < this.codeMaker.getLength(); k++) {
-                        if (k < randIndex) {
-                            sndCopy.updateCellColor(randIndex, this.mutationsList.get(i + 1).getColorSeq().get(k).getBackground());
-                        }
-                        else {
-                            sndCopy.updateCellColor(randIndex, this.mutationsList.get(i).getColorSeq().get(k).getBackground());
-                        }
+                for (int j = 0; j < this.codeMaker.getLength(); j++) {
+                    if (j < randIndex) {
+                        sndCopy.updateCellColor(j, this.mutationsList.get(pairsList.get(i + 1)).getColorSeq().get(j).getBackground());
+                    }
+                    else {
+                        sndCopy.updateCellColor(j, this.mutationsList.get(pairsList.get(i)).getColorSeq().get(j).getBackground());
                     }
                 }
 
-                this.mutationsList.get(i).copyColorSeq(fstCopy);
-                this.mutationsList.get(i + 1).copyColorSeq(sndCopy);
+                newParents.add(fstCopy);
+                recordedIndexes.add(pairsList.get(i));
+
+                newParents.add(sndCopy);
+                recordedIndexes.add(pairsList.get(i + 1));
             }
+        }
+
+
+        for (int i = 0; i < newParents.size(); i++) {
+            this.mutationsList.get(recordedIndexes.get(i)).copyColorSeq(newParents.get(i));
         }
     }
 
     private void mutation() {
         for (int i = 0; i < this.mutationsList.size(); i++) {
             // Check the probabilities of each pair
-            if (this.mutationsList.get(i).calculatePercentage() < 10) {
+            double randProb = this.calculatePercentage(Math.random() * 100, 100);
+            if (randProb <= 10) {
                 // Select rand index
                 int randIndex = (int)Math.floor(Math.random() * this.codeMaker.getLength());
 
                 // Mutate the cell
-                this.mutationsList.get(i).mutateCell(randIndex, null);
+                this.mutationsList.get(i).mutateCell(randIndex, ColorWheel.getRandColor());
             }
         }
     }
