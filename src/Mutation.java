@@ -40,7 +40,6 @@ public class Mutation extends ColorCode {
             this.updateCellColor(i, randColor);
         }
 
-        // Calculate percentage
         this.updateStats();
 
         return this;
@@ -59,7 +58,7 @@ public class Mutation extends ColorCode {
         this.updateStats();
     }
 
-    private void updateStats() {
+    public void updateStats() {
         this.fitnessSeq = this.gameManager.getFitnessSeq(this);
         this.calculateFitnessSum();
         this.displayPercentage();

@@ -16,7 +16,8 @@ public class GameManager implements Runnable {
     private JLabel gameStatusLabel;
     private final String successState = "the secret code is found";
     private boolean gameOver = false;
-    private final int colorCodeLength = 4;
+    private final int parentsNum = 20;
+    private final int colorCodeLength = 5;
     private final int colorCodeCellsSize = 64;
     private int generationNum;
     private JLabel generationLabel;
@@ -64,10 +65,9 @@ public class GameManager implements Runnable {
         this.gameFrame.addItem(southPanel, "south");
 
         southPanel.setLayout(new GridLayout(0, 2, 0, 0));
-        int mutationsNum = 4;
 
-        for (int i = 0; i < mutationsNum; i++) {
-            Mutation newMutation = new Mutation(this.colorCodeLength, "mutation #" + (i + 1), this.colorCodeCellsSize, this);
+        for (int i = 0; i < this.parentsNum; i++) {
+            Mutation newMutation = new Mutation(this.colorCodeLength, "parent #" + (i + 1), this.colorCodeCellsSize, this);
             this.mutationsList.add(newMutation);
             southPanel.add(newMutation.getGUI());
         }

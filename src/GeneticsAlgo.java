@@ -155,7 +155,7 @@ public class GeneticsAlgo {
 
         for (int i = 0; i < this.mutationsList.size(); i += 2) {
             // Check the probabilities of each pair
-            if (this.mutationsList.get(pairsList.get(i)).calculatePercentage() <= 70 || this.mutationsList.get(pairsList.get(i + 1)).calculatePercentage() <= 70) {
+            if (this.mutationsList.get(pairsList.get(i)).calculatePercentage() <= 80 || this.mutationsList.get(pairsList.get(i + 1)).calculatePercentage() <= 80) {
                 // Select rand index
                 int randIndex = (int)Math.floor(Math.random() * this.codeMaker.getLength());
 
@@ -205,7 +205,6 @@ public class GeneticsAlgo {
 
                 // Mutate the cell
                 this.mutationsList.get(i).mutateCell(randIndex, ColorWheel.getRandColor());
-                break;
             }
         }
     }
