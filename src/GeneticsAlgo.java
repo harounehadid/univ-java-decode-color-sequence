@@ -23,12 +23,15 @@ public class GeneticsAlgo {
 
     public void decode() {
         CustomFrame.sleep(50);
+        System.out.println("\nSELECT POPULATION --------------------------------");
         this.selectPopulations();
         // CustomFrame.sleep(250);
 
+        System.out.println("\nCROSSOVER --------------------------------");
         this.crossover();
         // CustomFrame.sleep(250);
 
+        System.out.println("\nMUTATION --------------------------------");
         this.mutation();
         // CustomFrame.sleep(250);
 
@@ -36,6 +39,41 @@ public class GeneticsAlgo {
     }
 
     private void selectPopulations() {
+        // Order parents depending on their percentage
+        ArrayList<Integer> indexesOrderConv = new ArrayList<>();
+        ArrayList<Integer> visitedIndexes = new ArrayList<>();
+
+        for (int i = 0; i < this.mutationsList.size(); i++) {
+            System.out.println("Current population percentages " + this.mutationsList.get(i).calculatePercentage());
+        }
+
+        for (int i = 0; i < this.mutationsList.size(); i++) {
+            double max = -1;
+            int index = -1;
+
+            for (int j = 0; j < this.mutationsList.size(); j++) {
+                if (this.mutationsList.get(j).calculatePercentage() >= max && ! visitedIndexes.contains(j)) {
+                    max = this.mutationsList.get(j).calculatePercentage();
+                    index = j;
+                }
+            }
+
+            indexesOrderConv.add(index);
+            visitedIndexes.add(index);
+        }
+
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+
+        for (int i = 0; i < this.mutationsList.size(); i++) {
+            System.out.println("Resulted order " + this.mutationsList.get(indexesOrderConv.get(i)).calculatePercentage());
+        }
+
+        ArrayList<Mutation> rearrangedParents = this.shallowCopy(this.mutationsList, indexesOrderConv);
+
+        for (int i = 0; i < this.mutationsList.size(); i++) {
+            this.mutationsList.get(i).copyColorSeq(rearrangedParents.get(i));
+        }
+
         // Calculate the probability for each population
         ArrayList<Double> probEnd = new ArrayList<>();
         double allFitnessSum = 0.0;
@@ -51,12 +89,10 @@ public class GeneticsAlgo {
         for (int i = 0; i < this.mutationsList.size() - 1; i++) {
             curRange += calculatePercentage(this.mutationsList.get(i).getFitnessSum(), allFitnessSum);
             probEnd.add(curRange);
-            // System.out.println("Population selection prob is " + probEnd.get(i));
+            System.out.println("Population selection prob is " + probEnd.get(i));
         }
 
-        System.out.println("\n\n\n");
-
-        // Run random number generator and compare with probabilities
+        // Selecting the new parents and storing their indexes
         ArrayList<Integer> selectedIndexes = new ArrayList<>();
 
         for (int i = 0; i < this.mutationsList.size(); i++) {
@@ -66,27 +102,20 @@ public class GeneticsAlgo {
             for (int j = 0; j < probEnd.size(); j++) {
                 if (randProb < probEnd.get(j)) {
                     selectedIndexes.add(j);
-                    // System.out.println("Selected population is " + j);
+                    System.out.println("Selected population is " + j);
                     break;
                 }
                 else {
                     if (j == probEnd.size() - 1) {
                         selectedIndexes.add(j + 1);
-                        // System.out.println("Selected population is " + (j + 1));
+                        System.out.println("Selected population is " + (j + 1));
                     }
                 }
             }
         }
 
         // Update each population depending on the results of roling
-        ArrayList<Mutation> updatedPopulation = new ArrayList<>();
-
-        for (int i = 0; i < this.mutationsList.size(); i++) {
-            Mutation selectedPopulation = new Mutation(this.codeMaker.getLength(), null, 0, this.gameManager).initialize();
-            selectedPopulation.copyColorSeq(this.mutationsList.get(selectedIndexes.get(i)));
-            updatedPopulation.add(selectedPopulation);
-            // System.out.println("Loading the selected population");
-        }
+        ArrayList<Mutation> updatedPopulation = this.shallowCopy(this.mutationsList, selectedIndexes);
 
         for (int i = 0; i < this.mutationsList.size(); i++) {
             this.mutationsList.get(i).copyColorSeq(updatedPopulation.get(i));
@@ -178,6 +207,24 @@ public class GeneticsAlgo {
                 this.mutationsList.get(i).mutateCell(randIndex, ColorWheel.getRandColor());
             }
         }
+    }
+
+    private ArrayList<Mutation> shallowCopy(ArrayList<Mutation> list, ArrayList<Integer> copyOrder) {
+        ArrayList<Mutation> updatedList = new ArrayList<>();
+
+        if (copyOrder == null) {
+            for (int i = 0; i < list.size(); i++) {
+                copyOrder.add(i);
+            }
+        }
+
+        for (int i = 0; i < this.mutationsList.size(); i++) {
+            Mutation selectedPopulation = new Mutation(this.codeMaker.getLength(), null, 0, this.gameManager).initialize();
+            selectedPopulation.copyColorSeq(this.mutationsList.get(copyOrder.get(i)));
+            updatedList.add(selectedPopulation);
+        }
+
+        return updatedList;
     }
 
     private boolean codeFound() {
