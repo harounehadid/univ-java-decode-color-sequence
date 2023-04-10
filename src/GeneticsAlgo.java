@@ -205,6 +205,7 @@ public class GeneticsAlgo {
 
                 // Mutate the cell
                 this.mutationsList.get(i).mutateCell(randIndex, ColorWheel.getRandColor());
+                break;
             }
         }
     }
