@@ -4,13 +4,8 @@ import java.util.ArrayList;
 import javax.swing.JLabel;
 
 public class CodeMaker extends ColorCode {
-
-    private ArrayList<Boolean> cellsAccessList;
-
     public CodeMaker(int length, String title, int cellsSize) {
         super(length, title, cellsSize);
-        this.cellsAccessList = new ArrayList<>();
-        for (int i = 0; i < this.getLength(); i++) this.cellsAccessList.add(true);
     }
 
     public void launch() {
@@ -42,20 +37,22 @@ public class CodeMaker extends ColorCode {
         ArrayList<Double> fitnessSeq = new ArrayList<>();
         ArrayList<JLabel> cbColorSeq = colorCode.getColorSeq();
 
-        for (int i = 0; i < this.getLength(); i++) this.cellsAccessList.set(i, true);
+        ArrayList<Integer> accessedIndexes = new ArrayList<>();
 
         for (int i = 0; i < this.getLength(); i++) {
             double fitness = 0;
 
             Color curColor = cbColorSeq.get(i).getBackground();
 
-            if (this.colorExists(curColor)) {
-                fitness += 0.6;
+            if (this.colorExists(curColor, null)) {
 
                 ArrayList<Integer> indexes = this.getColorIndexes(curColor);
+
                 for (Integer index : indexes) {
-                    if (index == i) {
-                        fitness += 0.4;
+                    // System.out.println(index);
+                    if (i == index && ! accessedIndexes.contains(index)) {
+                        fitness += 1;
+                        accessedIndexes.add(index);
                         break;
                     }
                 }
@@ -64,16 +61,35 @@ public class CodeMaker extends ColorCode {
             fitnessSeq.add(fitness);
         }
 
+        for (int i = 0; i < this.getLength(); i++) {
+            if (fitnessSeq.get(i) == 1) continue;
+
+            double fitness = 0;
+
+            Color curColor = cbColorSeq.get(i).getBackground();
+
+            if (this.colorExists(curColor, accessedIndexes)) {
+                fitness += 0.6;
+                fitnessSeq.set(i, fitness);
+            }
+        }
+
         return fitnessSeq;
     }
 
-    public boolean colorExists(Color color) {
+    public boolean colorExists(Color color, ArrayList<Integer> accessedIndex) {
         boolean exist = false;
 
         for (int i = 0; i < this.getLength(); i++) {
-            if (color == this.getColorSeq().get(i).getBackground() && this.cellsAccessList.get(i)) {
+            if (color == this.getColorSeq().get(i).getBackground()) {
+                if (accessedIndex != null) {
+                    if (accessedIndex.contains(i)) continue;
+                    else {
+                        accessedIndex.add(i);
+                    }
+                }
+
                 exist = true;
-                this.cellsAccessList.set(i, false);
                 break;
             }
         }
@@ -87,7 +103,6 @@ public class CodeMaker extends ColorCode {
         for (int i = 0; i < this.getLength(); i++) {
             if (color == this.getColorSeq().get(i).getBackground()) {
                 indexes.add(i);
-                break;
             }
         }
 

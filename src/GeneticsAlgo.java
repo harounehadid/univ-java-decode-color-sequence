@@ -233,7 +233,7 @@ public class GeneticsAlgo {
         for (Mutation mutation : this.mutationsList) {
             if (this.codeMaker.isEqual(mutation)) {
                 codeFound = true;
-                break;
+                mutation.onSelect();
             }
         }
 

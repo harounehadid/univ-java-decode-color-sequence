@@ -25,7 +25,6 @@ public class Mutation extends ColorCode {
     private void updateGUI(String type, String data) {
         if (type == "image") {
             ImageIcon image = new ImageIcon(data);
-            this.statusLabel.setSize(image.getIconWidth(), image.getIconHeight());
             this.statusLabel.setIcon(image);
         }
         else if (type == "text") {
@@ -60,8 +59,7 @@ public class Mutation extends ColorCode {
 
     public void updateStats() {
         this.fitnessSeq = this.gameManager.getFitnessSeq(this);
-        this.calculateFitnessSum();
-        this.displayPercentage();
+        this.calculateFitnessSum().displayPercentage();
     }
 
     public Mutation calculateFitnessSum() {
@@ -81,6 +79,10 @@ public class Mutation extends ColorCode {
     public void displayPercentage() {
         Double percentage = calculatePercentage();
         this.updateGUI("text", Double.toString(percentage) + "%");
+    }
+
+    public void onSelect() {
+        this.updateGUI("image", GetBaseDirPath.root() + "/src/media/accepted.png");
     }
 
     // Getters
