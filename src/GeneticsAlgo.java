@@ -23,20 +23,14 @@ public class GeneticsAlgo {
 
     public void decode() {
         CustomFrame.sleep(50);
-        System.out.println("\n\n\nSelect population --------------------------------------------------------------");
         this.selectPopulations();
         // CustomFrame.sleep(250);
-        System.out.println("--------------------------------------------------------------");
 
-        System.out.println("\n\n\nCrossover --------------------------------------------------------------");
         this.crossover();
         // CustomFrame.sleep(250);
-        System.out.println("--------------------------------------------------------------");
 
-        System.out.println("\n\n\nMutation --------------------------------------------------------------");
         this.mutation();
         // CustomFrame.sleep(250);
-        System.out.println("--------------------------------------------------------------");
 
         if (codeFound()) this.onCodeFound();
     }

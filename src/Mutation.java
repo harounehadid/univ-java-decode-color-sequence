@@ -63,14 +63,6 @@ public class Mutation extends ColorCode {
         this.updateStats();
     }
 
-    // public void onAccept() {
-    //     this.updateGUI("image", GetBaseDirPath.root() + "/src/media/accepted.png");
-    // }
-
-    // public void onReject() {
-    //     this.updateGUI("image", GetBaseDirPath.root() + "/src/media/rejected.png");
-    // }
-
     private void updateStats() {
         this.fitnessSeq = this.gameManager.getFitnessSeq(this);
         this.calculateFitnessSum();

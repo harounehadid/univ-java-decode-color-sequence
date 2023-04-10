@@ -11,8 +11,6 @@ public class CodeMaker extends ColorCode {
         super(length, title, cellsSize);
         this.cellsAccessList = new ArrayList<>();
         for (int i = 0; i < this.getLength(); i++) this.cellsAccessList.add(true);
-
-        System.out.println("Code maker is done initializing and it's length is " + this.getLength());
     }
 
     public void launch() {
@@ -44,8 +42,6 @@ public class CodeMaker extends ColorCode {
         ArrayList<Double> fitnessSeq = new ArrayList<>();
         ArrayList<JLabel> cbColorSeq = colorCode.getColorSeq();
 
-        // this.curFitnessSeq = colorCode.getFitnessSeq();
-
         for (int i = 0; i < this.getLength(); i++) this.cellsAccessList.set(i, true);
 
         for (int i = 0; i < this.getLength(); i++) {
@@ -53,22 +49,13 @@ public class CodeMaker extends ColorCode {
 
             Color curColor = cbColorSeq.get(i).getBackground();
 
-            // if (this.curFitnessSeq != null) {
-            //     if (this.curFitnessSeq.get(i) == 1) {
-            //         fitness = 1;
-            //         fitnessSeq.add(fitness);
-            //         continue;
-            //     }    
-            // }
-
             if (this.colorExists(curColor)) {
                 fitness += 0.6;
 
                 ArrayList<Integer> indexes = this.getColorIndexes(curColor);
                 for (Integer index : indexes) {
                     if (index == i) {
-                        fitness += 0.5;
-                        // subColorUnits(curColor);
+                        fitness += 0.4;
                         break;
                     }
                 }
@@ -82,8 +69,6 @@ public class CodeMaker extends ColorCode {
 
     public boolean colorExists(Color color) {
         boolean exist = false;
-
-        // if (color == this.getColorSeq().get(i).getBackground() && this.getColorUnitLeft(color) > 0 && this.cellsAccessList.get(i)) 
 
         for (int i = 0; i < this.getLength(); i++) {
             if (color == this.getColorSeq().get(i).getBackground() && this.cellsAccessList.get(i)) {
